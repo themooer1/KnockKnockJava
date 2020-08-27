@@ -95,6 +95,18 @@ spec:
                   operator: In
                   values:
                     - "true"
+      initContainers:
+      # Copy initial config from the config map
+      # Necessary bc droppy tries chowning config.json
+      - name: config-copier
+        image: busybox
+        command: ['cp', '-f', '/cfmap/config.json', '/droppyconfig/config.json']
+        volumeMounts:
+        - name: config
+          mountPath: /droppyconfig
+        - name: config-json
+          mountPath: /cfmap
+
       containers:
       - name: droppy-autocraft-filemanager
         image: silverwind/droppy
@@ -103,9 +115,6 @@ spec:
         volumeMounts:
             - name: config
               mountPath: /config
-            - name: config-json
-              mountPath: /config/config.json
-              subPath: config.json
             - name: minecraft
               mountPath: /files
       volumes:
