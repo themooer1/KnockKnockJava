@@ -31,7 +31,7 @@ spec:
   initContainers:
   - name: knockknock-downloader
     image: busybox
-    command: ['wget', 'https://github.com/themooer1/KnockKnock/releases/download/0.5.1/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar', '-O', '/plugins/knockknock.jar']
+    command: ['wget', 'https://github.com/themooer1/KnockKnock/releases/download/0.1.0/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar', '-O', '/plugins/knockknock.jar']
     volumeMounts:
         - name: plugins
           mountPath: /plugins
