@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mc
+spec:
+  restartPolicy: Never
+  containers:
+  - name: mc
+    image: themooer1/minecraft-server
+    ports:
+    - containerPort: 25565
+    env:
+    - name: EULA
+      value: "True"
+  # These containers are run during pod initialization
+

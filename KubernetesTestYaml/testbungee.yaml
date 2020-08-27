@@ -1,0 +1,98 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: bungee-test-config
+data:
+  config.yml: |
+    server_connect_timeout: 5000
+    listeners:
+    - query_port: 25577
+      motd: '&1Mr. Tumnus!'
+      tab_list: GLOBAL_PING
+      query_enabled: false
+      proxy_protocol: false
+      forced_hosts:
+        pvp.md-5.net: pvp
+      ping_passthrough: false
+      priorities:
+      - lobby
+      bind_local_address: true
+      host: 0.0.0.0:25577
+      max_players: 1
+      tab_size: 60
+      force_default_server: false
+    remote_ping_cache: -1
+    network_compression_threshold: 256
+    permissions:
+      default:
+      - bungeecord.command.server
+      - bungeecord.command.list
+      admin:
+      - bungeecord.command.alert
+      - bungeecord.command.end
+      - bungeecord.command.ip
+      - bungeecord.command.reload
+    log_pings: true
+    connection_throttle_limit: 3
+    prevent_proxy_connections: false
+    timeout: 30000
+    player_limit: -1
+    ip_forward: false
+    groups:
+      md_5:
+      - admin
+    remote_ping_timeout: 5000
+    connection_throttle: 4000
+    log_commands: false
+    stats: 60565a5d-40c0-421b-b579-a0656117773a
+    online_mode: true
+    forge_support: true
+    disabled_commands:
+    - disabledcommandhere
+    servers:
+      lobby:
+        motd: '&1Just another (waterfall) Tumnus - Forced Host'
+        address: mc.hypixel.net:25565
+        restricted: false
+
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tumnus
+spec:
+  serviceAccountName: autocraf-bungee
+  restartPolicy: OnFailure
+  initContainers:
+    - name: configurator
+      image: busybox
+      command: ['cp', '/config/config.yml', '/server/config.yml']
+      volumeMounts:
+        - name: config
+          mountPath: /config
+        - name: server
+          mountPath: /server
+  containers:
+  - name: bungeecord
+    image: themooer1/bungeecord
+    ports:
+    - containerPort: 25577
+    - containerPort: 5005
+    env:
+    - name: TYPE
+      value: "Waterfall"
+      #   - name: PLUGINS
+      #value: "https://github.com/themooer1/KnockKnock/releases/download/0.5.1/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    volumeMounts:
+        - name: server
+          mountPath: /server
+  volumes:
+      - name: config
+        configMap:
+          name: bungee-test-config
+      - name: plugins
+        emptyDir: {}
+      - name: server
+        emptyDir: {}
+  # These containers are run during pod initialization
+

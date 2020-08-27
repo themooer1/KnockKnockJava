@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: minecraft-backend
+spec:
+  selector:
+    app: minecraft
+  ports:
+    - protocol: TCP
+      port: 25565
+      targetPort: 25565
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: bungeecord-frontend
+spec:
+  type: NodePort
+  selector:
+    app: bungeecord
+  ports:
+    - protocol: TCP
+      port: 25565
+      targetPort: 25577
+      nodePort: 25565
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: knock
+  labels:
+    app: bungeecord
+spec:
+  serviceAccountName: autocraf-bungee
+  restartPolicy: OnFailure
+  initContainers:
+  - name: knockknock-downloader
+    image: busybox
+    command: ['wget', 'https://github.com/themooer1/KnockKnock/releases/download/0.5.1/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar', '-O', '/plugins/knockknock.jar']
+    volumeMounts:
+        - name: plugins
+          mountPath: /plugins
+  containers:
+  - name: bungeecord
+    image: themooer1/bungeecord
+    ports:
+    - containerPort: 25577
+    - containerPort: 5005
+    env:
+    - name: TYPE
+      value: "Waterfall"
+      #   - name: PLUGINS
+      #value: "https://github.com/themooer1/KnockKnock/releases/download/0.5.1/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar"
+    volumeMounts:
+        - name: plugins
+          mountPath: /server/plugins
+  volumes:
+      - name: plugins
+        emptyDir: {}
+  # These containers are run during pod initialization
+

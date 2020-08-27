@@ -1,0 +1,37 @@
+# autocraft.
+
+# Drag'n'drop file management
+droppy:
+  port: 30080
+
+proxy:
+  port: 30556  # External Minecraft Port
+  nodeSelector:
+    autocraft-frontend: "true"
+  
+minecraft:
+  # https://www.minecraft.net/en-us/eula/
+  eula: true
+  env: # Environment variables defined here: https://github.com/itzg/docker-minecraft-server
+    - name: OPS
+      value: themooer1
+    - name: MEMORY
+      value: 14G
+  nodeSelector:
+    autocraft-backend: "true"
+  storage:
+    create: true
+    size: 5Gi
+    existingPVC: ""
+
+nfs-server-provisioner:
+  persistence:
+    enabled: true
+    size: 10Gi
+  nodeSelector:
+    autocraft-frontend: "true"
+  storageClass:
+      name: "autocraft-nfs"
+      defaultClass: false
+      # mountOptions: [ "nolock" ]
+

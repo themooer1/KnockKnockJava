@@ -1,0 +1,88 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: autocraf-bungee
+  namespace: autocraf
+automountServiceAccountToken: true
+
+---
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: autocraf
+
+---
+
+
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: autocraf
+  name: autocraf-create-pods
+rules:
+  - apiGroups: ["*"] # "" indicates the core API group
+#    resources: ["pods"]
+    resources: ["*"]
+#    verbs: ["create", "get", "watch", "list", "delete"]
+    verbs: ["*"]
+
+---
+
+apiVersion: rbac.authorization.k8s.io/v1
+# This role binding allows "jane" to read pods in the "default" namespace.
+# You need to already have a Role named "pod-reader" in that namespace.
+kind: RoleBinding
+metadata:
+  name: bungee-create-pods
+  namespace: autocraf
+subjects:
+  - kind: ServiceAccount
+    name: autocraf-bungee # Name is case sensitive
+#    namespace: autocraf
+roleRef:
+  # "roleRef" specifies the binding to a Role / ClusterRole
+  kind: Role #this must be Role or ClusterRole
+  name: autocraf-create-pods # this must match the name of the Role or ClusterRole you wish to bind to
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+#
+#apiVersion: rbac.authorization.k8s.io/v1
+#kind: ClusterRole
+#metadata:
+#  # "namespace" omitted since ClusterRoles are not namespaced
+#  name: autocraf-namespace-controller
+#rules:
+#  - apiGroups: [""]
+#    #
+#    # at the HTTP level, the name of the resource for accessing Secret
+#    # objects is "secrets"
+#    resources: ["namespace"]
+#    resourceNames: ["autocraf"]
+#    verbs: ["create", "get", "delete"]
+#
+#---
+#
+#apiVersion: rbac.authorization.k8s.io/v1
+## This role binding allows "dave" to read secrets in the "development" namespace.
+## You need to already have a ClusterRole named "secret-reader".
+#kind: ClusterRoleBinding
+#metadata:
+#  name: bungee-manage-namespace
+#  #
+#  # The namespace of the RoleBinding determines where the permissions are granted.
+#  # This only grants permissions within the "development" namespace.
+##  namespace: development
+#subjects:
+#  - kind: ServiceAccount
+#    name: autocraf-bungee # Name is case sensitive
+#    namespace: autocraf
+#roleRef:
+#  kind: ClusterRole
+#  name: autocraf-namespace-controller
+#  apiGroup: rbac.authorization.k8s.io
+#
+#
+#---
