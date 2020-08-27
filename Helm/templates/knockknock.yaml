@@ -45,7 +45,8 @@ spec:
     - name: TYPE
       value: "Waterfall"
       #   - name: PLUGINS
-      #value: "https://github.com/themooer1/KnockKnock/releases/download/0.5.1/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar"
+      #value: "https://github.com/themooer1/KnockKnock/releases/download/0.1.0/KnockKnock-1.0-SNAPSHOT-jar-with-dependencies.jar"
+
     - name: EULA
       value: {{ quote .Values.minecraft.eula }}
     volumeMounts:
